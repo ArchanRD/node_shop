@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import session from "express-session";
 import routes from "./routes/routes.js";
+import bodyParser from "body-parser";
 
 const app = express();
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true });
@@ -12,6 +13,8 @@ db.on("error", (err) => console.log(err));
 db.once("open", () => console.log("Connected to database"));
 
 //middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(

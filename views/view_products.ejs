@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <%= page_title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+</head>
+
+<body>
+    <%- include("../layout/header") %>
+
+        <table class="w-75 m-auto mt-5 table table-striped">
+            <tr>
+                <td>Pid</td>
+                <td>Name</td>
+                <td>Image</td>
+                <td>Price</td>
+                <td>Stock</td>
+                <td>Category</td>
+                <td>Tags</td>
+                <td>Variants</td>
+                <td>Desc</td>
+                <td>Status</td>
+                <td colspan="2">Action</td>
+            </tr>
+            <% if(products){ products.forEach(row => { %>
+                <tr>
+
+                    <td>
+                        <%=row.pid%>
+                    </td>
+                    <td>
+                        <%=row.pname%>
+                    </td>
+                    <td>
+                        <img src="<%= row.pimages %>" width="50" height="50" class="object-fit-cover" />
+                    </td>
+                    <td>
+                        <%=row.pprice%>
+                    </td>
+                    <td>
+                        <%=row.pstock%>
+                    </td>
+                    <td>
+                        <%=row.pcategorys%>
+                    </td>
+                    <td>
+                        <%=row.ptags%>
+                    </td>
+                    <td>
+                        <%=row.variants%>
+                    </td>
+                    <td>
+                        <%=row.pdesc%>
+                    </td>
+                    <td>
+                        <%= row.status %>
+                    </td>
+                    <td>
+                        <a href="/edit_product/<%= row.pid %>" class="btn btn-success">Edit</a>
+                    </td>
+                    <td>
+                        <form action="/delete_product/<%= row.pid %>" method="post">
+                            <button type="submit" class="btn btn-danger">Remove</button></form>
+                    </td>
+                </tr>
+                <% }); } %>
+        </table>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

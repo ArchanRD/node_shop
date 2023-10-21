@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+</head>
+
+<body>
+    <%- include("../layout/header") %>
+        <form action="/update_product/<%= products.pid %>" enctype="multipart/form-data" method="post" id="edit-product-form">
+            <div class="w-50 border-1 border border-secondary-subtle rounded p-3 mx-auto my-5">
+                <h2 class="fw-bold">Edit Product</h2>
+                <div class="mb-3">
+                    <label for="pname" class="form-label">Name</label>
+                    <input type="text" value="<%= products.pname %>" id="pname" name="pname" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="pdesc" class="form-label">Description</label>
+                    <textarea type="text" id="pdesc" name="pdesc" class="form-control" required>
+<%= products.pdesc %></textarea
+          >
+        </div>
+        <div class="mb-3">
+          <label for="pprice" class="form-label">Price</label>
+          <input
+            type="number"
+            value="<%= products.pprice %>"
+            id="pprice"
+            name="pprice"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="pimage" class="form-label">Image</label>
+          <input type="file" name="pimage" id="pimage" class="form-control" />
+          <label for="poldiamge" class="form-label">Existing image</label>
+          <img
+            src="/<%= products.pimages %>"
+            alt="product image"
+            height="80"
+            width="80"
+          />
+          <input
+            type="hidden"
+            value="<%= products.pimages %>"
+            id="poldimage"
+            name="poldimage"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="pcategory" class="form-label">Category</label>
+          <select name="pcategory" id="pcategory" class="form-control" required>
+            <option value="mens" <%= (products.pcategorys === "mens") ? "selected=true" : "" %>>Mens</option>
+            <option value="womens" <%= (products.pcategorys === "womens") ? "selected=true" : "" %>>Womens</option>
+            <option value="kids" <%= (products.pcategorys === "kids") ? "selected=true" : "" %>>Kids</option>
+            <option value="shoes" <%= (products.pcategorys === "shoes") ? "selected=true" : "" %>>Shoes</option>
+            <option value="accessories" <%= (products.pcategorys === "accessories") ? "selected=true" : "" %>>Accessories</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="pstatus" class="form-label">Product Status</label>
+          <select name="pstatus" id="pstatus" class="form-control">
+            <option value="New arrival" <%= (products.status === "New Arrival") ? "selected=true" : "" %>>New Arrival</option>
+            <option value="On sale" <%= (products.status === "On sale") ? "selected=true" : "" %>>On Sale</option>
+            <option value="Regular" <%= (products.status === "Regular") ? "selected=true" : "" %>>Regular</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="pstock">Stock</label>
+          <input type="number" name="pstock" id="pstock" value="<%= products.pstock %>" class="form-control" required />
+        </div>
+        <div class="mb-3" id="tag-container">
+          <label for="ptags">Tags</label>
+          <input type="text" class="form-control" id="ptags"  placeholder="enter tag name"  onkeydown="addTag(event)" />
+          <% products.ptags.forEach((tag, index) => { %>
+            <div class="d-flex align-items-center" >
+              <input type="text" value="<%= tag %>" name="ptags" class="form-control w-50 my-2 mr-2" />
+              <button type="button" class="btn btn-danger mx-2 removebtn" id="<%= tag + index %>" onclick="removeTagOrVar(event)">&#215;</button>
+            </div>
+          <%  });%>
+        </div>
+        <div class="mb-3" id="variants-container">
+          <label for="pvariants">Variants</label>
+          <input type="text" class="form-control" id="pvariants"  placeholder="enter vairant" onkeydown="addVariant(event)" />
+          <% products.variants.forEach((tag, index) => { %>
+            <div class="d-flex align-items-center" >
+              <input type="text" value="<%= tag %>" name="pvariants" class="form-control w-50 my-2 mr-2" />
+              <button type="button" class="btn btn-danger mx-2 removebtn" id="<%= tag + index %>" onclick="removeTagOrVar(event)">&#215;</button>
+            </div>
+          <%  });%>
+        </div>
+        <button type="submit" class="btn btn-success">Update</button>
+      </div>
+    </form>
+
+    <script>
+      function removeTagOrVar(event){
+        document.getElementById(event.target.id).parentElement.remove();
+      }
+
+      let tagContainer = document.getElementById("tag-container");
+            let tagInput = document.getElementById("ptags");
+
+            let variantsContainer = document.getElementById("variants-container");
+            let variantsInput = document.getElementById("pvariants");
+
+            // Function to add a tag
+            function addTag(event) {
+                if (event.key === "Enter" && tagInput.value.trim() !== "") {
+                    event.preventDefault();
+                    let tag = tagInput.value.trim();
+
+                    let wrapper = document.createElement("div");
+                    let tagElement = document.createElement("input");
+                    tagElement.setAttribute("class", "form-control w-50 my-2 mr-2");
+                    tagElement.setAttribute("value", tag);
+                    tagElement.setAttribute("name", "ptags");
+                    tagElement.setAttribute("type", "text");
+
+                    wrapper.setAttribute("class", "d-flex align-items-center");
+
+                    // Add a button to remove the tag
+                    let removeButton = document.createElement("button");
+                    removeButton.innerHTML = "&#215;";
+                    removeButton.setAttribute("class", "btn btn-danger mx-2");
+                    removeButton.addEventListener("click", () => {
+                        wrapper.remove();
+                    });
+
+                    wrapper.appendChild(tagElement);
+                    wrapper.appendChild(removeButton);
+                    tagContainer.appendChild(wrapper);
+
+                    // Clear the input field
+                    tagInput.value = "";
+                }
+            }
+
+            function addVariant(event) {
+                if (event.key === "Enter" && variantsInput.value.trim() !== "") {
+                    event.preventDefault();
+                    event.preventDefault();
+                    let variant = variantsInput.value.trim();
+
+                    let wrapperVariant = document.createElement("div");
+                    let varElement = document.createElement("input");
+                    varElement.setAttribute("class", "form-control w-50 my-2 mr-2");
+                    varElement.setAttribute("value", variant);
+                    varElement.setAttribute("name", "pvariants");
+                    varElement.setAttribute("type", "text");
+
+                    wrapperVariant.setAttribute("class", "d-flex align-items-center");
+
+                    // Add a button to remove the tag
+                    let removeButton = document.createElement("button");
+                    removeButton.innerHTML = "&#215;";
+                    removeButton.setAttribute("class", "btn btn-danger mx-2");
+                    removeButton.addEventListener("click", () => {
+                        wrapperVariant.remove();
+                    });
+
+                    wrapperVariant.appendChild(varElement);
+                    wrapperVariant.appendChild(removeButton);
+                    document
+                        .getElementById("variants-container")
+                        .appendChild(wrapperVariant);
+
+                    // Clear the input field
+                    variantsInput.value = "";
+                }
+            }
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
